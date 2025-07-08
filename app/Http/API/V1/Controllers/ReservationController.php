@@ -13,7 +13,6 @@ use App\Http\API\V1\Requests\CreateReservationRequest;
 use App\UseCases\CreateReservationUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Throwable;
 
