@@ -107,7 +107,7 @@ class CreateReservationUseCase
 
             $reservation->date_from = $dateFrom;
             $reservation->date_to = $dateTo;
-            $reservation->status = ReservationStatusEnum::WAITING;
+            $reservation->status = ReservationStatusEnum::WAITING_FOR_PAYMENT;
             $reservation->save();
 
             DB::commit();

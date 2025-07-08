@@ -6,7 +6,7 @@ namespace App\Domains\Hotel\Enum;
 
 enum ReservationStatusEnum: int
 {
-    case WAITING = 1;
+    case WAITING_FOR_PAYMENT = 1;
     case PAID = 2;
     case CANCELLED = 3;
 }

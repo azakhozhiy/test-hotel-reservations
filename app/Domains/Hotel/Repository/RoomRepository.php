@@ -20,7 +20,7 @@ class RoomRepository
     public function getQueryForCheckAvailability(string $dateFrom, string $dateTo): Builder
     {
         $statuses = [
-            ReservationStatusEnum::WAITING,
+            ReservationStatusEnum::WAITING_FOR_PAYMENT,
             ReservationStatusEnum::PAID,
         ];
 
