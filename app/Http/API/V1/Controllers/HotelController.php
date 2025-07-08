@@ -61,21 +61,4 @@ class HotelController
 
         return response()->json($presenter->build());
     }
-
-    public function getAvailableRooms(Request $request, int $hotelId): JsonResponse
-    {
-        $hotel = $this->hotelService->findById($hotelId);
-
-        $dto = new RoomFilterDTO(
-            dateFrom: (string)$request->get('dateFrom'),
-            dateTo: (string)$request->get('dateTo'),
-            initiator: $request->user(),
-            hotelId: $hotel->id
-        );
-
-        $rooms = $this->roomService->getAvailable($dto);
-        $presenter = new RoomsPresenter($rooms);
-
-        return response()->json($presenter->build());
-    }
 }
