@@ -13,7 +13,10 @@ use App\Domains\Hotel\Services\HotelService;
 use App\Domains\Hotel\Services\RoomService;
 use App\Domains\User\DTO\UserDTO;
 use App\Domains\User\Model\User;
+use App\Jobs\RoomReserved;
+use App\Services\RoomReserveLocker;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Psr\Log\LoggerInterface;
@@ -25,7 +28,8 @@ class CreateReservationUseCase
         protected HotelService $hotelService,
         protected RoomService $roomService,
         protected UserRepository $userRepository,
-        protected LoggerInterface $logger
+        protected LoggerInterface $logger,
+        protected RoomReserveLocker $roomReserveLocker
     ) {
     }
 
@@ -36,6 +40,7 @@ class CreateReservationUseCase
         }
 
         $user = new User();
+        $user->name = $dto->getName();
         $user->email = $dto->getEmail();
         $user->password = Str::random(5);
         $user->save();
@@ -48,11 +53,25 @@ class CreateReservationUseCase
      */
     public function execute(CreateReservationDTO $dto): Reservation
     {
+        return $this->roomReserveLocker->lock(
+            $dto->getRoomId(),
+            $dto->getDateFrom(),
+            $dto->getDateTo(),
+            fn() => $this->createReservation($dto)
+        );
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function createReservation(CreateReservationDTO $dto): Reservation
+    {
         $hotel = $this->hotelService->findById($dto->getHotelId());
 
         $roomFilter = new RoomFilterDTO(
             dateFrom: $dto->getDateFrom(),
             dateTo: $dto->getDateTo(),
+            initiator: $dto->getUser()->getAuthUser(),
             hotelId: $hotel->getKey(),
         );
 
@@ -67,13 +86,27 @@ class CreateReservationUseCase
                 lockForUpdate: true
             );
 
+            $room->setHotelRelation($hotel);
+
+            $dateFrom = Carbon::parse($dto->getDateFrom());
+            $dateTo = Carbon::parse($dto->getDateTo());
+            $countDays = $dateFrom->diffInDays($dateTo);
+
             $reservation = new Reservation();
             $reservation->room()->associate($room);
             $reservation->user()->associate($user);
-            $reservation->check_out_at = $room->check_out_time;
-            $reservation->check_in_at = $room->check_in_time;
-            $reservation->date_from = Carbon::parse($dto->getDateFrom());
-            $reservation->date_to = Carbon::parse($dto->getDateTo());
+            $reservation->count_days = $countDays;
+
+            $reservation->check_in_at = $dateTo
+                ->setHours($room->getCheckInHours())
+                ->setMinutes($room->getCheckInMinutes());
+
+            $reservation->check_out_at = $dateFrom
+                ->setHours($room->getCheckOutHours())
+                ->setMinutes($room->getCheckOutMinutes());
+
+            $reservation->date_from = $dateFrom;
+            $reservation->date_to = $dateTo;
             $reservation->status = ReservationStatusEnum::WAITING;
             $reservation->save();
 
@@ -84,6 +117,8 @@ class CreateReservationUseCase
 
             throw $e;
         }
+
+        dispatch(new RoomReserved($reservation));
 
         return $reservation;
     }

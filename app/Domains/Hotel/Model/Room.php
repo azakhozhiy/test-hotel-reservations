@@ -29,9 +29,41 @@ class Room extends Model
 
     protected $table = 'rooms';
 
+    public function isHotelLoaded(): bool
+    {
+        return $this->relationLoaded('hotel');
+    }
+
     public function hotel(): BelongsTo
     {
         return $this->belongsTo(Hotel::class, self::FIELD_HOTEL_ID);
+    }
+
+    public function setHotelRelation(Hotel $hotel): static
+    {
+        $this->setRelation('hotel', $hotel);
+
+        return $this;
+    }
+
+    public function getCheckInHours(): int
+    {
+        return (int)explode(':', $this->check_in_time)[0];
+    }
+
+    public function getCheckInMinutes(): int
+    {
+        return (int)explode(':', $this->check_in_time)[1];
+    }
+
+    public function getCheckOutHours(): int
+    {
+        return (int)explode(':', $this->check_out_time)[0];
+    }
+
+    public function getCheckOutMinutes(): int
+    {
+        return (int)explode(':', $this->check_out_time)[1];
     }
 
     public function reservations(): HasMany

@@ -15,7 +15,7 @@ return new class extends Migration {
         Schema::create('rooms', static function (Blueprint $table) {
             $table->id();
             $table->string(Room::FIELD_TITLE);
-            $table->string(Room::FIELD_SLUG)->unique();
+            $table->string(Room::FIELD_SLUG);
             $table->unsignedBigInteger(Room::FIELD_HOTEL_ID);
             $table->string(Room::FIELD_CHECK_IN_TIME);
             $table->string(Room::FIELD_CHECK_OUT_TIME);

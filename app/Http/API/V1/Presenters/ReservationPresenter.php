@@ -12,10 +12,20 @@ class ReservationPresenter
     {
     }
 
-    public function build(): array{
+    public function build(): array
+    {
         return [
             'id' => $this->reservation->id,
-            'room' => $this->reservation->rela
+            'count_days' => $this->reservation->count_days,
+            'status' => $this->reservation->status->name,
+            'room_id' => $this->reservation->room_id,
+            'room' => $this->reservation->isRoomLoaded() ?
+                (new RoomPresenter($this->reservation->room))->build()
+                : null,
+            'check_in_at' => $this->reservation->check_in_at,
+            'check_out_at' => $this->reservation->check_out_at,
+            'created_at' => $this->reservation->created_at->toIso8601ZuluString(),
+            'updated_at' => $this->reservation->updated_at?->toIso8601ZuluString(),
         ];
     }
 }

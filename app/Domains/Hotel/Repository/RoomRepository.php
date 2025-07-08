@@ -26,7 +26,7 @@ class RoomRepository
 
         return $this->query()
             ->whereDoesntHave('reservations', function (Builder $q) use ($dateFrom, $dateTo, $statuses) {
-                $q->where(function (QueryBuilder $query) use ($dateFrom, $dateTo) {
+                $q->where(function (Builder $query) use ($dateFrom, $dateTo) {
                     $query->whereDate(Reservation::FIELD_DATE_FROM, '<=', $dateTo)
                         ->whereDate(Reservation::FIELD_DATE_TO, '>=', $dateFrom);
                 })->whereIn(Reservation::FIELD_STATUS, $statuses);

@@ -8,8 +8,17 @@ use App\Domains\User\Model\User;
 
 class UserDTO
 {
-    public function __construct(protected ?int $id = null, protected string $email, protected ?User $authUser = null)
+    public function __construct(
+        protected ?int $id = null,
+        protected string $email,
+        protected string $name,
+        protected ?User $authUser = null
+    ) {
+    }
+
+    public function getName(): string
     {
+        return $this->name;
     }
 
     public function getId(): ?int

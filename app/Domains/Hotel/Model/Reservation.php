@@ -14,12 +14,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $room_id
  * @property int $user_id
- * @property int $status
+ * @property ReservationStatusEnum $status
  * @property int $count_days
  * @property Carbon $date_from
  * @property Carbon $date_to
  * @property Carbon $check_in_at
  * @property Carbon $check_out_at
+ * @property Carbon $created_at
+ * @property Carbon|null $updated_at
  *
  * @property-read User $user
  * @see Reservation::user()
@@ -38,7 +40,7 @@ class Reservation extends Model
     public const string FIELD_CHECK_OUT_AT = 'check_out_at';
     public const string FIELD_STATUS = 'status';
 
-    protected $table = 'orders';
+    protected $table = 'reservations';
 
     protected $casts = [
         self::FIELD_DATE_FROM => 'datetime',
