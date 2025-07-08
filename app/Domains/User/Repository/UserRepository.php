@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domains\Hotel\Repository;
+namespace App\Domains\User\Repository;
 
 use App\Domains\User\Model\User;
 use Illuminate\Database\Eloquent\Builder;

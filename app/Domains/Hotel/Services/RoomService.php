@@ -17,14 +17,6 @@ class RoomService
     {
     }
 
-    public function getByHotel(Hotel $hotel, array $with = []): Collection
-    {
-        return $this->roomRepository->query()
-            ->where(Room::FIELD_HOTEL_ID, $hotel->getKey())
-            ->with($with)
-            ->get();
-    }
-
     public function getAvailable(RoomFilterDTO $filterDTO): Collection
     {
         return $this->roomRepository->getQueryForCheckAvailability($filterDTO->getDateFrom(), $filterDTO->getDateTo())
