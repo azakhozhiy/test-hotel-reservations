@@ -3,8 +3,6 @@
 - [x] Models
   - [x] Seeder for Hotels
   - [x] Seeder for Hotel Rooms
-- [ ] Commands
-  - [ ] Command for create an User
 - [x] Migrations
   - [x] Users table
   - [x] Hotels table
@@ -15,4 +13,4 @@
   - [x] Find or create user of reservation
   - [x] Find selected room (with check availability)
   - [x] Create reservation
-  - [ ] Send email to User
+  - [x] Send email to User
